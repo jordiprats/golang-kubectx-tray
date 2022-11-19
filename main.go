@@ -1,4 +1,4 @@
-package traykubectx
+package main
 
 import (
 	"github.com/getlantern/systray"
