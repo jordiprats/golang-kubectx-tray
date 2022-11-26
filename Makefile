@@ -1,2 +1,3 @@
 build:
-	go build main.go -o 
+	go build -o KubeCtxTray.app/Contents/MacOS/kubetray main.go
+	bash buildicon.sh
