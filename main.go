@@ -71,6 +71,15 @@ func chooseIcon(context string) {
 			} else if item.Icon == "yellow" {
 				systray.SetIcon(icons.Yellow)
 				return
+			} else if item.Icon == "red" {
+				systray.SetIcon(icons.Red)
+				return
+			} else if item.Icon == "loki" {
+				systray.SetIcon(icons.Loki)
+				return
+			} else if item.Icon == "odin" {
+				systray.SetIcon(icons.Odin)
+				return
 			} else {
 				systray.SetIcon(icons.Kube)
 				return
