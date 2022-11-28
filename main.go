@@ -198,6 +198,13 @@ func onReady() {
 		os.Exit(1)
 	}
 	<-done
+
+	err = watcher.Add(kctconfig_path)
+	if err != nil {
+		fmt.Printf("Add failed: %s\n", err.Error())
+		os.Exit(1)
+	}
+	<-done
 }
 
 func onExit() {
