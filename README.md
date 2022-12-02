@@ -41,6 +41,9 @@ The current list of available icons is:
 * **red**: ![Red k8s icon](icons/red.png "Red k8s icon")
 * **loki**: ![Loki icon](icons/loki.png "Loki icon")
 * **odin**: ![Odin icon](icons/odin.png "Odin icon")
+* **greenproc**: ![Green processor icon](icons/proc_green.png "Green processor icon")
+* **yellowproc**: ![Yellow processor icon](icons/proc_yellow.png "Yellow processor icon")
+* **redproc**: ![Red processor icon](icons/proc_red.png "Red processor icon")
 
 Please submit a PR if you want to add more, in the **icons** folder you can find the icon plus the [2goarray](https://github.com/cratonica/2goarray) version of it.
 

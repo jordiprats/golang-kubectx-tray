@@ -53,34 +53,47 @@ func chooseIcon(context string) {
 
 	kctconfig_read, err := os.ReadFile(kctconfig_path)
 	if err != nil {
-		fmt.Printf("Error reading kctconfig file: %s\n", err)
+		fmt.Printf("chooseIcon: Error reading kctconfig file: %s\n", err)
 	}
 
 	kctconfigData := KubeCtxTrayConfig{}
 	err = yaml.Unmarshal(kctconfig_read, &kctconfigData)
 	if err != nil {
-		fmt.Printf("error: %s\n", err.Error())
+		fmt.Printf("chooseIcon: error: %s\n", err.Error())
 	}
 
 	for _, item := range kctconfigData.Contexts {
 		if strings.Contains(context, item.Match) {
 			systray.SetTitle(" " + item.Title)
-			if item.Icon == "green" {
+
+			trimed_icon := strings.TrimSpace(item.Icon)
+
+			switch trimed_icon {
+			case "green":
 				systray.SetIcon(icons.Green)
 				return
-			} else if item.Icon == "yellow" {
+			case "yellow":
 				systray.SetIcon(icons.Yellow)
 				return
-			} else if item.Icon == "red" {
+			case "red":
 				systray.SetIcon(icons.Red)
 				return
-			} else if item.Icon == "loki" {
+			case "loki":
 				systray.SetIcon(icons.Loki)
 				return
-			} else if item.Icon == "odin" {
+			case "odin":
 				systray.SetIcon(icons.Odin)
 				return
-			} else {
+			case "greenproc":
+				systray.SetIcon(icons.ProcGreen)
+				return
+			case "yellowproc":
+				systray.SetIcon(icons.ProcYellow)
+				return
+			case "redproc":
+				systray.SetIcon(icons.ProcRed)
+				return
+			default:
 				systray.SetIcon(icons.Kube)
 				return
 			}
@@ -95,18 +108,18 @@ func setIcon() {
 
 	kubeconfig_read, err := os.ReadFile(kubeconfig_path)
 	if err != nil {
-		fmt.Printf("Error reading kubeconfig file: %s\n", err)
+		fmt.Printf("setIcon: Error reading kubeconfig file: %s\n", err)
 		os.Exit(1)
 	}
 
 	kubeconfigData := KubeConfigFile{}
 	err = yaml.Unmarshal(kubeconfig_read, &kubeconfigData)
 	if err != nil {
-		fmt.Printf("error: %s\n", err.Error())
+		fmt.Printf("setIcon: error: %s\n", err.Error())
 	}
 
 	if kubeconfigData.CurrentContext == "" {
-		fmt.Println("Error retrieving context")
+		fmt.Println("setIcon: Error retrieving context")
 		os.Exit(1)
 	}
 
@@ -144,14 +157,14 @@ func onReady() {
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
-		fmt.Println("Error setting up fsnotify")
+		fmt.Println("onReady: Error setting up fsnotify")
 		os.Exit(1)
 	}
 	defer watcher.Close()
 
 	home_dir, err := os.UserHomeDir()
 	if err != nil {
-		fmt.Println("Error retrieving UserHomeDir")
+		fmt.Println("onReady: Error retrieving UserHomeDir")
 		os.Exit(1)
 	}
 
@@ -164,9 +177,9 @@ func onReady() {
 	// mQuit.SetIcon(icons.Kube)
 	go func() {
 		<-mQuit.ClickedCh
-		fmt.Println("Requesting quit")
+		fmt.Println("onReady: Requesting quit")
 		systray.Quit()
-		fmt.Println("Finished quitting")
+		fmt.Println("onReady: Finished quitting")
 	}()
 
 	done := make(chan bool)
@@ -179,14 +192,15 @@ func onReady() {
 				if !ok {
 					return
 				}
-				if event.Op == fsnotify.Write {
+				fmt.Printf("event: %s\n", event.Op.String())
+				if event.Op == fsnotify.Write || event.Op == fsnotify.Rename {
 					setIcon()
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return
 				}
-				fmt.Printf("error: %s\n", err.Error())
+				fmt.Printf("onReady: error: %s\n", err.Error())
 			}
 		}
 
@@ -194,15 +208,12 @@ func onReady() {
 
 	err = watcher.Add(kubeconfig_path)
 	if err != nil {
-		fmt.Printf("Add failed: %s\n", err.Error())
+		fmt.Printf("onReady: Add failed: %s\n", err.Error())
 		os.Exit(1)
 	}
-	<-done
-
 	err = watcher.Add(kctconfig_path)
 	if err != nil {
-		fmt.Printf("Add failed: %s\n", err.Error())
-		os.Exit(1)
+		fmt.Printf("onReady: Add kct failed: %s\n", err.Error())
 	}
 	<-done
 }
