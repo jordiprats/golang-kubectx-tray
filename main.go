@@ -104,23 +104,46 @@ func chooseIcon(context string) {
 	systray.SetIcon(icons.Kube)
 }
 
+func setDisconnectedIcon() {
+	systray.SetTitle("")
+	systray.SetIcon(icons.KubeDisconnected)
+
+	if menu_context == nil {
+		menu_context = systray.AddMenuItem("", "context")
+		menu_context.Disable()
+	} else {
+		menu_context.SetTitle("")
+	}
+
+	if menu_namespace == nil {
+		menu_namespace = systray.AddMenuItem("", "context")
+		menu_namespace.Disable()
+		systray.AddSeparator()
+	} else {
+		menu_namespace.SetTitle("")
+	}
+}
+
 func setIcon() {
 
 	kubeconfig_read, err := os.ReadFile(kubeconfig_path)
 	if err != nil {
 		fmt.Printf("setIcon: Error reading kubeconfig file: %s\n", err)
-		os.Exit(1)
+		setDisconnectedIcon()
+		return
 	}
 
 	kubeconfigData := KubeConfigFile{}
 	err = yaml.Unmarshal(kubeconfig_read, &kubeconfigData)
 	if err != nil {
 		fmt.Printf("setIcon: error: %s\n", err.Error())
+		setDisconnectedIcon()
+		return
 	}
 
 	if kubeconfigData.CurrentContext == "" {
-		fmt.Println("setIcon: Error retrieving context")
-		os.Exit(1)
+		setDisconnectedIcon()
+		return
 	}
 
 	fmt.Println(kubeconfigData.CurrentContext)
