@@ -165,7 +165,7 @@ func setIcon() {
 	}
 
 	if menu_namespace == nil {
-		menu_namespace = systray.AddMenuItem(current_namespace, "context")
+		menu_namespace = systray.AddMenuItem(current_namespace, "namespace")
 		menu_namespace.Disable()
 		systray.AddSeparator()
 	} else {
