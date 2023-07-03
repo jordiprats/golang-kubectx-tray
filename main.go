@@ -196,6 +196,19 @@ func onReady() {
 
 	setIcon()
 
+	systray.AddSeparator()
+
+	mQuit := systray.AddMenuItem("Refresh", "Refresh")
+	// mQuit.SetIcon(icons.Kube)
+	go func() {
+		<-mQuit.ClickedCh
+		fmt.Println("Refresh: Starting refresh")
+		setIcon()
+		fmt.Println("Refresh: Finished refreshing")
+	}()
+
+	systray.AddSeparator()
+
 	mQuit := systray.AddMenuItem("Quit", "Quit")
 	// mQuit.SetIcon(icons.Kube)
 	go func() {
