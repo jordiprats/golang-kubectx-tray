@@ -198,7 +198,7 @@ func onReady() {
 
 	systray.AddSeparator()
 
-	mQuit := systray.AddMenuItem("Refresh", "Refresh")
+	mRefresh := systray.AddMenuItem("Refresh", "Refresh")
 	// mQuit.SetIcon(icons.Kube)
 	go func() {
 		<-mQuit.ClickedCh
